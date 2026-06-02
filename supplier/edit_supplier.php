@@ -24,7 +24,7 @@ if ($id_supplier > 0) {
 }
 
 if (empty($supplier)) {
-    header('Location: data_supplier.php');
+    header('Location: supplier.php');
     exit;
 }
 ?>
@@ -54,7 +54,7 @@ if (empty($supplier)) {
                                 <h3>Edit Supplier</h3>
                                 <p class="text-muted">Edit data supplier yang sudah terdaftar.</p>
                             </div>
-                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ if (empty($supplier)) {
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
-                            <form method="POST" action="proses_edit_supplier.php">
+                            <form method="POST" action="proses_supplier.php">
                                 <input type="hidden" name="id_supplier" value="<?php echo $supplier['id_supplier']; ?>">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Supplier</label>

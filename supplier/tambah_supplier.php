@@ -31,7 +31,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
                                 <h3>Tambah Supplier</h3>
                                 <p class="text-muted">Isi data supplier baru untuk ditambahkan ke sistem.</p>
                             </div>
-                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
-                            <form method="POST" action="proses_tambah_supplier.php">
+                            <form method="POST" action="proses_supplier.php">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Supplier</label>
                                     <input type="text" name="nama_supplier" class="form-control" required>
