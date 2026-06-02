@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
+    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 include 'koneksi_db.php';
@@ -18,8 +18,9 @@ if ($id_user <= 0 || $username === '') {
 }
 
 if ($password !== '') {
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $stmt = $conn->prepare('UPDATE users SET username = ?, password = ?, role = ?, status = ? WHERE id_user = ?');
-    $stmt->bind_param('ssssi', $username, $password, $role, $status, $id_user);
+    $stmt->bind_param('ssssi', $username, $hashedPassword, $role, $status, $id_user);
 } else {
     $stmt = $conn->prepare('UPDATE users SET username = ?, role = ?, status = ? WHERE id_user = ?');
     $stmt->bind_param('sssi', $username, $role, $status, $id_user);
@@ -32,3 +33,5 @@ if ($stmt->execute()) {
 $stmt->close();
 header('Location: users.php?message=' . urlencode('Gagal memperbarui user.'));
 exit;
+
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 include 'koneksi_db.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,12 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index.php?message=" . urlencode("Akun nonaktif"));
             exit;
         }
-        // cek password
-        if ($password === $user['password']) {
+
+        $passwordMatched = password_verify($password, $user['password']);
+        $legacyPassword = !$passwordMatched && $password === $user['password'];
+
+        if ($passwordMatched || $legacyPassword) {
+            if ($legacyPassword || password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+                $newHash = password_hash($password, PASSWORD_DEFAULT);
+                $updateStmt = $conn->prepare('UPDATE users SET password = ? WHERE id_user = ?');
+                $updateStmt->bind_param('si', $newHash, $user['id_user']);
+                $updateStmt->execute();
+                $updateStmt->close();
+            }
+
+            session_regenerate_id(true);
             $_SESSION['id_user'] = $user['id_user'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
-            $_SESSION['login_Un51k4'] = true;
+            $_SESSION['L091n_t0K0'] = true;
             // arahkan sesuai role
             if ($user['role'] === 'admin') {
                 header("Location: admin_dashboard.php");
