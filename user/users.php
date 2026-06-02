@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
-    header('Location: ../index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
+    header('Location: ../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 
@@ -12,22 +12,16 @@ function sanitize($value) {
     return htmlspecialchars(trim($value));
 }
 
-function getAllBarangMasuk($conn) {
-    $data = [];
-    $sql = "SELECT bm.id_masuk, bm.tanggal, bm.jumlah,
-                   b.nama_barang, s.nama_supplier, u.username
-            FROM barang_masuk bm
-            JOIN barang b ON bm.id_barang = b.id_barang
-            JOIN supplier s ON bm.id_supplier = s.id_supplier
-            LEFT JOIN users u ON bm.id_user = u.id_user
-            ORDER BY bm.id_masuk DESC";
+function getAllUsers($conn) {
+    $users = [];
+    $sql = "SELECT id_user, username, role, status FROM users ORDER BY id_user ASC";
     if ($result = $conn->query($sql)) {
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+            $users[] = $row;
         }
         $result->free();
     }
-    return $data;
+    return $users;
 }
 
 $message = '';
@@ -35,13 +29,12 @@ if (isset($_GET['message'])) {
     $message = sanitize($_GET['message']);
 }
 
-$dataBarangMasuk = getAllBarangMasuk($conn);
-$role = $_SESSION['role'] ?? '';
+$users = getAllUsers($conn);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Barang Masuk</title>
+    <title>User Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/css/style.css">
 </head>
@@ -60,8 +53,8 @@ $role = $_SESSION['role'] ?? '';
                 <div class="col-md-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
-                            <h3 class="mb-0">Daftar Barang Masuk</h3>
-                            <a href="tambah_barang_masuk.php" class="btn btn-primary">Tambah Barang Masuk</a>
+                            <h3 class="mb-0">Daftar User</h3>
+                            <a href="tambah_user.php" class="btn btn-primary">Tambah User</a>
                         </div>
                     </div>
                 </div>
@@ -86,26 +79,26 @@ $role = $_SESSION['role'] ?? '';
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Tanggal</th>
-                                            <th>Nama Barang</th>
-                                            <th>Supplier</th>
-                                            <th>Jumlah</th>
-                                            <th>Dicatat Oleh</th>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($dataBarangMasuk as $item): ?>
+                                        <?php foreach ($users as $user): ?>
                                             <tr>
-                                                <td><?php echo $item['id_masuk']; ?></td>
-                                                <td><?php echo htmlspecialchars($item['tanggal']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['nama_barang']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['nama_supplier']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['jumlah']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['username'] ?? '-'); ?></td>
+                                                <td><?php echo $user['id_user']; ?></td>
+                                                <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                                <td><?php echo htmlspecialchars($user['role']); ?></td>
+                                                <td><?php echo htmlspecialchars($user['status']); ?></td>
                                                 <td>
-                                                    <a href="edit_barang_masuk.php?id=<?php echo $item['id_masuk']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                                    <a href="proses/delete.php?id=<?php echo $item['id_masuk']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data barang masuk ini?')">Hapus</a>
+                                                    <a href="edit_user.php?id=<?php echo $user['id_user']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                    <?php if ($user['username'] !== ($_SESSION['username'] ?? '')): ?>
+                                                        <a href="proses/delete.php?id=<?php echo $user['id_user']; ?>" class="btn btn-sm btn-outline-<?php echo $user['status'] === 'aktif' ? 'danger' : 'success'; ?>">
+                                                            <?php echo $user['status'] === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'; ?>
+                                                        </a>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

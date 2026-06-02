@@ -1,10 +1,10 @@
-﻿<?php
+<?php
 session_start();
 if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
+    header('Location: ../../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
-include 'koneksi_db.php';
+include '../../koneksi_db.php';
 
 $id_user = (int) ($_POST['id_user'] ?? 0);
 $username = trim($_POST['username'] ?? '');
@@ -13,7 +13,7 @@ $role = $_POST['role'] ?? 'petugas';
 $status = $_POST['status'] ?? 'aktif';
 
 if ($id_user <= 0 || $username === '') {
-    header('Location: users.php?message=' . urlencode('Data tidak valid.'));
+    header('Location: ../users.php?message=' . urlencode('Data tidak valid.'));
     exit;
 }
 
@@ -27,11 +27,11 @@ if ($password !== '') {
 }
 
 if ($stmt->execute()) {
-    header('Location: users.php?message=' . urlencode('User berhasil diperbarui.'));
+    header('Location: ../users.php?message=' . urlencode('User berhasil diperbarui.'));
     exit;
 }
 $stmt->close();
-header('Location: users.php?message=' . urlencode('Gagal memperbarui user.'));
+header('Location: ../users.php?message=' . urlencode('Gagal memperbarui user.'));
 exit;
 
-
+?>

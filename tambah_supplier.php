@@ -15,11 +15,11 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include 'layout/sidebar.php'; ?>
+    <?php include '../layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include 'layout/nav.php'; ?>
+    <?php include '../layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">

@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true) {
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
     header('Location: ../index.php');
     exit;
 }
@@ -59,11 +59,11 @@ if ($result = $conn->query($sqlSupplier)) {
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include '../layout/sidebar_sub.php'; ?>
+    <?php include '../layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include '../layout/nav_sub.php'; ?>
+    <?php include '../layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">
