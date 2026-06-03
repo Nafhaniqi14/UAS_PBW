@@ -105,7 +105,6 @@ $role = $_SESSION['role'] ?? '';
                                                 <td><?php echo htmlspecialchars($item['username'] ?? '-'); ?></td>
                                                 <td>
                                                     <a href="edit_barang_masuk.php?id=<?php echo $item['id_masuk']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                                    <a href="proses/delete.php?id=<?php echo $item['id_masuk']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data barang masuk ini?')">Hapus</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
