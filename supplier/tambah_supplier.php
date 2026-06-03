@@ -10,7 +10,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
 <head>
     <title>Tambah Supplier</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="../asset/css/style.css">
 </head>
 <body class="admin-dashboard">
 
@@ -65,7 +65,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="asset/js/main.js"></script>
+<script src="../asset/js/main.js"></script>
 </body>
 </html>
 

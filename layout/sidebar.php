@@ -24,8 +24,13 @@ $dashboardUrl = $role === 'admin' ? 'admin_dashboard.php' : 'karyawan_dashboard.
             <img class="menu-icon" src="asset/img/kategori-icon.svg" alt="Kategori Icon">
             Kategori
         </a>
+<<<<<<< Updated upstream
         <a class="<?php echo sidebarActive($currentPage, 'supplier.php', 'data_supplier.php', 'edit_supplier.php', 'tambah_supplier.php', 'hapus_supplier.php'); ?>" href="supplier/supplier.php">
             <img class="menu-icon" src="asset/img/supplier-icon.svg" alt="Supplier Icon">
+=======
+        <a class="<?php echo sidebarActive($currentPage, 'data_supplier.php', 'edit_supplier.php', 'tambah_supplier.php'); ?>" href="<?php echo $basePrefix; ?>supplier/data_supplier.php">
+            <img class="menu-icon" src="<?php echo $basePrefix; ?>asset/img/supplier-icon.svg" alt="Supplier Icon">
+>>>>>>> Stashed changes
             Supplier
         </a>
     <?php endif; ?>

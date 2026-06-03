@@ -5,7 +5,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
     exit;
 }
 
-include 'koneksi_db.php';
+include '../../koneksi_db.php';
 
 $nama_supplier = isset($_POST['nama_supplier']) ? trim($_POST['nama_supplier']) : '';
 $alamat = isset($_POST['alamat']) ? trim($_POST['alamat']) : '';

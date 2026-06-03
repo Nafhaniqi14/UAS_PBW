@@ -5,7 +5,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
     exit;
 }
 
-include 'koneksi_db.php';
+include '../koneksi_db.php';
 
 function sanitize($value) {
     return htmlspecialchars(trim($value));
@@ -35,16 +35,16 @@ $suppliers = getAllSuppliers($conn);
 <head>
     <title>Supplier</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="../asset/css/style.css">
 </head>
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include 'layout/sidebar.php'; ?>
+    <?php include '../layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include 'layout/nav.php'; ?>
+    <?php include '../layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">
@@ -109,6 +109,6 @@ $suppliers = getAllSuppliers($conn);
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="asset/js/main.js"></script>
+<script src="../asset/js/main.js"></script>
 </body>
 </html>
