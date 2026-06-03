@@ -31,7 +31,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
                                 <h3>Tambah Supplier</h3>
                                 <p class="text-muted">Isi data supplier baru untuk ditambahkan ke sistem.</p>
                             </div>
-                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>

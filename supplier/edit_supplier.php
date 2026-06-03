@@ -24,7 +24,7 @@ if ($id_supplier > 0) {
 }
 
 if (empty($supplier)) {
-    header('Location: supplier.php');
+    header('Location: data_supplier.php');
     exit;
 }
 ?>
@@ -54,7 +54,7 @@ if (empty($supplier)) {
                                 <h3>Edit Supplier</h3>
                                 <p class="text-muted">Edit data supplier yang sudah terdaftar.</p>
                             </div>
-                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>
