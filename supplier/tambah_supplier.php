@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 session_start();
 if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
+    header('Location: ../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 ?>
@@ -10,7 +10,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
 <head>
     <title>Tambah Supplier</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="../asset/css/style.css">
 </head>
 <body class="admin-dashboard">
 
@@ -29,9 +29,9 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div>
                                 <h3>Tambah Supplier</h3>
-                                <p class="text-muted">Isi data supplier baru untuk ditambahkan ke sistem.</p>
+                                <p class="text-muted mb-0">Isi data supplier baru untuk ditambahkan ke sistem.</p>
                             </div>
-                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>
@@ -41,20 +41,23 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
-                            <form method="POST" action="proses_supplier.php">
+                            <form method="POST" action="proses_tambah_supplier.php">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Supplier</label>
-                                    <input type="text" name="nama_supplier" class="form-control" required>
+                                    <input type="text" name="nama_supplier" class="form-control" placeholder="Masukkan nama supplier" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Alamat</label>
-                                    <textarea name="alamat" class="form-control" rows="3" required></textarea>
+                                    <textarea name="alamat" class="form-control" rows="3" placeholder="Masukkan alamat supplier" required></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">No HP</label>
-                                    <input type="text" name="no_hp" class="form-control" required>
+                                    <input type="text" name="no_hp" class="form-control" placeholder="Masukkan nomor HP supplier" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Tambah Supplier</button>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary w-100">Tambah Supplier</button>
+                                    <a href="data_supplier.php" class="btn btn-outline-secondary w-100">Batal</a>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -65,7 +68,6 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="asset/js/main.js"></script>
+<script src="../asset/js/main.js"></script>
 </body>
 </html>
-

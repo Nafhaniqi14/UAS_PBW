@@ -1,11 +1,13 @@
-﻿<?php
+<?php
 session_start();
 
 if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
+    header('Location: ../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 
+// File ini berada di /supplier/data_supplier.php
+// Koneksi DB ada di root, jadi gunakan ../koneksi_db.php
 include '../koneksi_db.php';
 
 function sanitize($value) {
@@ -36,7 +38,7 @@ $suppliers = getAllSuppliers($conn);
 <head>
     <title>Data Supplier</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="../asset/css/style.css">
 </head>
 <body class="admin-dashboard">
 
@@ -63,8 +65,9 @@ $suppliers = getAllSuppliers($conn);
             <?php if ($message): ?>
                 <div class="row mb-4">
                     <div class="col-md-12">
-                        <div class="alert alert-info">
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
                             <?php echo $message; ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     </div>
                 </div>
@@ -86,18 +89,24 @@ $suppliers = getAllSuppliers($conn);
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($suppliers as $supplier): ?>
+                                        <?php if (empty($suppliers)): ?>
                                             <tr>
-                                                <td><?php echo $supplier['id_supplier']; ?></td>
-                                                <td><?php echo htmlspecialchars($supplier['nama_supplier']); ?></td>
-                                                <td><?php echo htmlspecialchars($supplier['alamat']); ?></td>
-                                                <td><?php echo htmlspecialchars($supplier['no_hp']); ?></td>
-                                                <td>
-                                                    <a href="edit_supplier.php?id=<?php echo $supplier['id_supplier']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                                    <a href="delete_supplier.php?id=<?php echo $supplier['id_supplier']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus supplier ini?')">Hapus</a>
-                                                </td>
+                                                <td colspan="5" class="text-center text-muted">Belum ada data supplier.</td>
                                             </tr>
-                                        <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <?php foreach ($suppliers as $supplier): ?>
+                                                <tr>
+                                                    <td><?php echo $supplier['id_supplier']; ?></td>
+                                                    <td><?php echo htmlspecialchars($supplier['nama_supplier']); ?></td>
+                                                    <td><?php echo htmlspecialchars($supplier['alamat']); ?></td>
+                                                    <td><?php echo htmlspecialchars($supplier['no_hp']); ?></td>
+                                                    <td>
+                                                        <a href="edit_supplier.php?id=<?php echo $supplier['id_supplier']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                        <a href="hapus_supplier.php?id=<?php echo $supplier['id_supplier']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus supplier ini?')">Hapus</a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -110,7 +119,6 @@ $suppliers = getAllSuppliers($conn);
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="asset/js/main.js"></script>
+<script src="../asset/js/main.js"></script>
 </body>
 </html>
-
