@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     />
     <link rel="stylesheet" href="asset/css/style.css" />
-    <title>Bootstrap Login Page | Ludiflex</title>
+    <title>Login Page</title>
   </head>
 
   <body class="login-page">

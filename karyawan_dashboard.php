@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true) {
-    header('Location: index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
+    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 
@@ -99,3 +99,4 @@ $totalKeluar = getCount($conn, 'barang_keluar');
 <script src="asset/js/main.js"></script>
 </body>
 </html>
+

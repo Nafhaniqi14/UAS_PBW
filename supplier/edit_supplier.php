@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 session_start();
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
+    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 
-include 'koneksi_db.php';
+include '../koneksi_db.php';
 
 $id_supplier = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $supplier = [];
@@ -24,7 +24,7 @@ if ($id_supplier > 0) {
 }
 
 if (empty($supplier)) {
-    header('Location: data_supplier.php');
+    header('Location: supplier.php');
     exit;
 }
 ?>
@@ -38,11 +38,11 @@ if (empty($supplier)) {
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include 'layout/sidebar.php'; ?>
+    <?php include '../layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include 'layout/nav.php'; ?>
+    <?php include '../layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">
@@ -54,7 +54,7 @@ if (empty($supplier)) {
                                 <h3>Edit Supplier</h3>
                                 <p class="text-muted">Edit data supplier yang sudah terdaftar.</p>
                             </div>
-                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ if (empty($supplier)) {
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
-                            <form method="POST" action="proses_edit_supplier.php">
+                            <form method="POST" action="proses_supplier.php">
                                 <input type="hidden" name="id_supplier" value="<?php echo $supplier['id_supplier']; ?>">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Supplier</label>
@@ -92,3 +92,4 @@ if (empty($supplier)) {
 <script src="asset/js/main.js"></script>
 </body>
 </html>
+

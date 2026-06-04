@@ -1,33 +1,26 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
-    header('Location: ../index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
+    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 
-include '../koneksi_db.php';
+include 'koneksi_db.php';
 
 function sanitize($value) {
     return htmlspecialchars(trim($value));
 }
 
-function getAllBarangMasuk($conn) {
-    $data = [];
-    $sql = "SELECT bm.id_masuk, bm.tanggal, bm.jumlah,
-                   b.nama_barang, s.nama_supplier, u.username
-            FROM barang_masuk bm
-            JOIN barang b ON bm.id_barang = b.id_barang
-            JOIN supplier s ON bm.id_supplier = s.id_supplier
-            LEFT JOIN users u ON bm.id_user = u.id_user
-            ORDER BY bm.id_masuk DESC";
+function getAllSuppliers($conn) {
+    $suppliers = [];
+    $sql = "SELECT id_supplier, nama_supplier, alamat, no_hp FROM supplier ORDER BY id_supplier ASC";
     if ($result = $conn->query($sql)) {
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+            $suppliers[] = $row;
         }
         $result->free();
     }
-    return $data;
+    return $suppliers;
 }
 
 $message = '';
@@ -35,24 +28,23 @@ if (isset($_GET['message'])) {
     $message = sanitize($_GET['message']);
 }
 
-$dataBarangMasuk = getAllBarangMasuk($conn);
-$role = $_SESSION['role'] ?? '';
+$suppliers = getAllSuppliers($conn);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Barang Masuk</title>
+    <title>Supplier</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../asset/css/style.css">
+    <link rel="stylesheet" href="asset/css/style.css">
 </head>
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include '../layout/sidebar.php'; ?>
+    <?php include 'layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include '../layout/nav.php'; ?>
+    <?php include 'layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">
@@ -60,8 +52,8 @@ $role = $_SESSION['role'] ?? '';
                 <div class="col-md-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
-                            <h3 class="mb-0">Daftar Barang Masuk</h3>
-                            <a href="tambah_barang_masuk.php" class="btn btn-primary">Tambah Barang Masuk</a>
+                            <h3 class="mb-0">Daftar Supplier</h3>
+                            <a href="tambah_supplier.php" class="btn btn-primary">Tambah Supplier</a>
                         </div>
                     </div>
                 </div>
@@ -86,25 +78,22 @@ $role = $_SESSION['role'] ?? '';
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Tanggal</th>
-                                            <th>Nama Barang</th>
-                                            <th>Supplier</th>
-                                            <th>Jumlah</th>
-                                            <th>Dicatat Oleh</th>
+                                            <th>Nama Supplier</th>
+                                            <th>Alamat</th>
+                                            <th>No HP</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($dataBarangMasuk as $item): ?>
+                                        <?php foreach ($suppliers as $supplier): ?>
                                             <tr>
-                                                <td><?php echo $item['id_masuk']; ?></td>
-                                                <td><?php echo htmlspecialchars($item['tanggal']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['nama_barang']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['nama_supplier']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['jumlah']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['username'] ?? '-'); ?></td>
+                                                <td><?php echo $supplier['id_supplier']; ?></td>
+                                                <td><?php echo htmlspecialchars($supplier['nama_supplier']); ?></td>
+                                                <td><?php echo htmlspecialchars($supplier['alamat']); ?></td>
+                                                <td><?php echo htmlspecialchars($supplier['no_hp']); ?></td>
                                                 <td>
-                                                    <a href="edit_barang_masuk.php?id=<?php echo $item['id_masuk']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                    <a href="edit_supplier.php?id=<?php echo $supplier['id_supplier']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                    <a href="hapus_supplier.php?id=<?php echo $supplier['id_supplier']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus supplier ini?')">Hapus</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -120,6 +109,6 @@ $role = $_SESSION['role'] ?? '';
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../asset/js/main.js"></script>
+<script src="asset/js/main.js"></script>
 </body>
 </html>

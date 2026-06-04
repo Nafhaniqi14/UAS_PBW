@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
+    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 
@@ -29,3 +29,4 @@ if ($stmt = $conn->prepare($sql)) {
     header('Location: data_supplier.php?message=Error: ' . $conn->error);
 }
 ?>
+

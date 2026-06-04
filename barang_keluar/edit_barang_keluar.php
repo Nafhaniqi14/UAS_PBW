@@ -5,16 +5,21 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
     exit;
 }
 
+// Generate CSRF token jika belum ada
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 include '../koneksi_db.php';
 
-$id_masuk = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id_keluar = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $item = [];
 
-if ($id_masuk > 0) {
-    $sql = "SELECT id_masuk, tanggal, id_barang, id_supplier, jumlah
-            FROM barang_masuk WHERE id_masuk = ?";
+if ($id_keluar > 0) {
+    $sql = "SELECT id_keluar, tanggal, id_barang, jumlah, tujuan
+            FROM barang_keluar WHERE id_keluar = ?";
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $id_masuk);
+        $stmt->bind_param("i", $id_keluar);
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
@@ -25,7 +30,7 @@ if ($id_masuk > 0) {
 }
 
 if (empty($item)) {
-    header('Location: data_barang_masuk.php');
+    header('Location: data_barang_keluar.php');
     exit;
 }
 
@@ -39,20 +44,12 @@ if ($result = $conn->query($sqlBarang)) {
     $result->free();
 }
 
-// Ambil daftar supplier untuk dropdown
-$listSupplier = [];
-$sqlSupplier = "SELECT id_supplier, nama_supplier FROM supplier ORDER BY nama_supplier ASC";
-if ($result = $conn->query($sqlSupplier)) {
-    while ($row = $result->fetch_assoc()) {
-        $listSupplier[] = $row;
-    }
-    $result->free();
-}
+$csrf_token = $_SESSION['csrf_token'];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Barang Masuk</title>
+    <title>Edit Barang Keluar</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/css/style.css">
 </head>
@@ -72,10 +69,10 @@ if ($result = $conn->query($sqlSupplier)) {
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div>
-                                <h3>Edit Barang Masuk</h3>
-                                <p class="text-muted">Edit data barang masuk. Stok barang akan disesuaikan otomatis.</p>
+                                <h3>Edit Barang Keluar</h3>
+                                <p class="text-muted">Edit data barang keluar. Stok barang akan disesuaikan otomatis.</p>
                             </div>
-                            <a href="data_barang_masuk.php" class="btn btn-secondary">Kembali ke Daftar Barang Masuk</a>
+                            <a href="data_barang_keluar.php" class="btn btn-secondary">Kembali ke Daftar Barang Keluar</a>
                         </div>
                     </div>
                 </div>
@@ -85,12 +82,15 @@ if ($result = $conn->query($sqlSupplier)) {
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
-                            <form method="POST" action="proses/edit.php">
-                                <input type="hidden" name="id_masuk" value="<?php echo $item['id_masuk']; ?>">
-                                <input type="hidden" name="id_barang_lama" value="<?php echo $item['id_barang']; ?>">
-                                <input type="hidden" name="jumlah_lama" value="<?php echo $item['jumlah']; ?>">
+                            <form method="POST" action="proses/proses_edit.php">
+                                <!-- CSRF Token -->
+                                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                <input type="hidden" name="id_keluar" value="<?php echo intval($item['id_keluar']); ?>">
+                                <input type="hidden" name="id_barang_lama" value="<?php echo intval($item['id_barang']); ?>">
+                                <input type="hidden" name="jumlah_lama" value="<?php echo intval($item['jumlah']); ?>">
+
                                 <div class="mb-3">
-                                    <label class="form-label">Tanggal Masuk</label>
+                                    <label class="form-label">Tanggal Keluar</label>
                                     <input type="date" name="tanggal" class="form-control" value="<?php echo htmlspecialchars($item['tanggal']); ?>" required>
                                 </div>
                                 <div class="mb-3">
@@ -98,31 +98,23 @@ if ($result = $conn->query($sqlSupplier)) {
                                     <select name="id_barang" class="form-control" required>
                                         <option value="">-- Pilih Barang --</option>
                                         <?php foreach ($listBarang as $barang): ?>
-                                            <option value="<?php echo $barang['id_barang']; ?>"
+                                            <option value="<?php echo intval($barang['id_barang']); ?>"
                                                 <?php echo ($barang['id_barang'] == $item['id_barang']) ? 'selected' : ''; ?>>
                                                 <?php echo htmlspecialchars($barang['nama_barang']); ?>
-                                                (Stok: <?php echo $barang['stok']; ?>)
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Supplier</label>
-                                    <select name="id_supplier" class="form-control" required>
-                                        <option value="">-- Pilih Supplier --</option>
-                                        <?php foreach ($listSupplier as $supplier): ?>
-                                            <option value="<?php echo $supplier['id_supplier']; ?>"
-                                                <?php echo ($supplier['id_supplier'] == $item['id_supplier']) ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($supplier['nama_supplier']); ?>
+                                                (Stok: <?php echo intval($barang['stok']); ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Jumlah</label>
-                                    <input type="number" name="jumlah" class="form-control" min="1" value="<?php echo htmlspecialchars($item['jumlah']); ?>" required>
+                                    <input type="number" name="jumlah" class="form-control" min="1" value="<?php echo intval($item['jumlah']); ?>" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Update Barang Masuk</button>
+                                <div class="mb-3">
+                                    <label class="form-label">Tujuan</label>
+                                    <input type="text" name="tujuan" class="form-control" value="<?php echo htmlspecialchars($item['tujuan'] ?? ''); ?>" placeholder="Contoh: Gudang A, Divisi IT, dll" maxlength="100">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Update Barang Keluar</button>
                             </form>
                         </div>
                     </div>

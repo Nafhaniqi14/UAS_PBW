@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: index.php');
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
+    header('Location: index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
 ?>
@@ -15,11 +15,11 @@ if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || (
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include 'layout/sidebar.php'; ?>
+    <?php include '../layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include 'layout/nav.php'; ?>
+    <?php include '../layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">
@@ -31,7 +31,7 @@ if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || (
                                 <h3>Tambah Supplier</h3>
                                 <p class="text-muted">Isi data supplier baru untuk ditambahkan ke sistem.</p>
                             </div>
-                            <a href="data_supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
+                            <a href="supplier.php" class="btn btn-secondary">Kembali ke Daftar Supplier</a>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@ if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || (
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
-                            <form method="POST" action="proses_tambah_supplier.php">
+                            <form method="POST" action="proses_supplier.php">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Supplier</label>
                                     <input type="text" name="nama_supplier" class="form-control" required>
@@ -68,3 +68,4 @@ if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true || (
 <script src="asset/js/main.js"></script>
 </body>
 </html>
+
