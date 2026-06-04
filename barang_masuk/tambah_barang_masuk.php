@@ -37,11 +37,11 @@ if ($result = $conn->query($sqlSupplier)) {
 <body class="admin-dashboard">
 
 <div class="sidebar d-none d-md-block">
-    <?php include '../layout/sidebar_sub.php'; ?>
+    <?php include '../layout/sidebar.php'; ?>
 </div>
 
 <div class="main-wrapper">
-    <?php include '../layout/nav_sub.php'; ?>
+    <?php include '../layout/nav.php'; ?>
 
     <div class="content">
         <div class="container-fluid">
