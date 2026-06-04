@@ -5,7 +5,7 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
     exit;
 }
 
-include 'koneksi_db.php';
+include '../../koneksi_db.php';
 
 $id_supplier = isset($_POST['id_supplier']) && $_POST['id_supplier'] !== '' ? intval($_POST['id_supplier']) : 0;
 $nama_supplier = isset($_POST['nama_supplier']) ? trim($_POST['nama_supplier']) : '';
