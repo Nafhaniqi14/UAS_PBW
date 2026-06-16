@@ -4,12 +4,18 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
     header('Location: ../../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
+
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    header('Location: ../tambah_user.php?message=' . urlencode('Akses tidak sah!'));
+    exit;
+}
+
 include '../../koneksi_db.php';
 
 $username = trim($_POST['username'] ?? '');
 $password = trim($_POST['password'] ?? '');
-$role = $_POST['role'] ?? 'petugas';
-$status = $_POST['status'] ?? 'aktif';
+$role     = in_array($_POST['role'] ?? '', ['admin', 'petugas']) ? $_POST['role'] : 'petugas';
+$status   = in_array($_POST['status'] ?? '', ['aktif', 'nonaktif']) ? $_POST['status'] : 'aktif';
 
 if ($username === '' || $password === '') {
     header('Location: ../tambah_user.php?message=' . urlencode('Username dan password harus diisi.'));
@@ -26,5 +32,3 @@ if ($stmt->execute()) {
 $stmt->close();
 header('Location: ../tambah_user.php?message=' . urlencode('Gagal menambahkan user.'));
 exit;
-
-?>

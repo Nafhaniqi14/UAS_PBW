@@ -10,6 +10,7 @@
     />
     <link rel="stylesheet" href="asset/css/style.css" />
     <title>Login Page</title>
+    <link rel="icon" href="asset/img/logo_website.png" type="image/x-icon" />
   </head>
 
   <body class="login-page">

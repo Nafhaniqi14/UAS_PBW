@@ -1,35 +1,43 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
     header('Location: ../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
-
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
 include '../koneksi_db.php';
 
-function sanitize($value) {
-    return htmlspecialchars(trim($value));
-}
+$perPage = 10;
+$page    = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset  = ($page - 1) * $perPage;
 
-function getAllUsers($conn) {
-    $users = [];
-    $sql = "SELECT id_user, username, role, status FROM users ORDER BY id_user ASC";
-    if ($result = $conn->query($sql)) {
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-        $result->free();
-    }
-    return $users;
+$totalRows = 0;
+$res = $conn->query("SELECT COUNT(*) AS total FROM users");
+if ($res) { $totalRows = (int)$res->fetch_assoc()['total']; $res->free(); }
+$totalPages = max(1, (int)ceil($totalRows / $perPage));
+
+$users = [];
+$sql = "SELECT id_user, username, role, status FROM users ORDER BY id_user ASC LIMIT ? OFFSET ?";
+if ($stmt = $conn->prepare($sql)) {
+    $stmt->bind_param("ii", $perPage, $offset);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) { $users[] = $row; }
+    $stmt->close();
 }
 
 $message = '';
-if (isset($_GET['message'])) {
-    $message = sanitize($_GET['message']);
+$allowed_messages = [
+    'User berhasil ditambahkan.', 'Status user berhasil diubah.', 'User tidak ditemukan.',
+    'ID user tidak valid.', 'Tidak dapat mengubah status akun sendiri.', 'Akses tidak sah.',
+    'Gagal menambahkan user.',
+];
+if (isset($_GET['message']) && in_array($_GET['message'], $allowed_messages, true)) {
+    $message = $_GET['message'];
 }
-
-$users = getAllUsers($conn);
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,16 +45,14 @@ $users = getAllUsers($conn);
     <title>User Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/css/style.css">
+    <link rel="icon" href="../asset/img/logo_website.png" type="image/x-icon" />
 </head>
 <body class="admin-dashboard">
-
 <div class="sidebar d-none d-md-block">
     <?php include '../layout/sidebar.php'; ?>
 </div>
-
 <div class="main-wrapper">
     <?php include '../layout/nav.php'; ?>
-
     <div class="content">
         <div class="container-fluid">
             <div class="row mb-4">
@@ -54,22 +60,20 @@ $users = getAllUsers($conn);
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <h3 class="mb-0">Daftar User</h3>
-                            <a href="tambah_user.php" class="btn btn-primary">Tambah User</a>
+                            <div class="d-flex gap-2">
+                                <a href="tambah_user.php" class="btn btn-primary">Tambah User</a>
+                                <a href="export_user.php" class="btn btn-success">Export Excel</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <?php if ($message): ?>
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="alert alert-info">
-                            <?php echo $message; ?>
-                        </div>
-                    </div>
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($message); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
-
             <div class="row g-4">
                 <div class="col-12">
                     <div class="card shadow-sm border-0 rounded-4">
@@ -86,25 +90,55 @@ $users = getAllUsers($conn);
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($users as $user): ?>
-                                            <tr>
-                                                <td><?php echo $user['id_user']; ?></td>
-                                                <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                                <td><?php echo htmlspecialchars($user['role']); ?></td>
-                                                <td><?php echo htmlspecialchars($user['status']); ?></td>
-                                                <td>
-                                                    <a href="edit_user.php?id=<?php echo $user['id_user']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                                    <?php if ($user['username'] !== ($_SESSION['username'] ?? '')): ?>
-                                                        <a href="proses/delete.php?id=<?php echo $user['id_user']; ?>" class="btn btn-sm btn-outline-<?php echo $user['status'] === 'aktif' ? 'danger' : 'success'; ?>">
-                                                            <?php echo $user['status'] === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'; ?>
-                                                        </a>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
+                                        <?php if (empty($users)): ?>
+                                            <tr><td colspan="5" class="text-center text-muted">Belum ada data user.</td></tr>
+                                        <?php else: ?>
+                                            <?php foreach ($users as $user): ?>
+                                                <tr>
+                                                    <td><?php echo intval($user['id_user']); ?></td>
+                                                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                                    <td><?php echo htmlspecialchars($user['role']); ?></td>
+                                                    <td>
+                                                        <span class="badge bg-<?php echo $user['status'] === 'aktif' ? 'success' : 'secondary'; ?>">
+                                                            <?php echo htmlspecialchars($user['status']); ?>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="edit_user.php?id=<?php echo intval($user['id_user']); ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                        <?php if ($user['username'] !== ($_SESSION['username'] ?? '')): ?>
+                                                            <form method="POST" action="proses/delete.php" style="display:inline"
+                                                                  onsubmit="return confirm('Ubah status user ini?')">
+                                                                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                                                <input type="hidden" name="id" value="<?php echo intval($user['id_user']); ?>">
+                                                                <button type="submit" class="btn btn-sm btn-outline-<?php echo $user['status'] === 'aktif' ? 'danger' : 'success'; ?>">
+                                                                    <?php echo $user['status'] === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'; ?>
+                                                                </button>
+                                                            </form>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
+                            <?php if ($totalPages > 1): ?>
+                            <nav class="mt-3">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>">Sebelumnya</a>
+                                    </li>
+                                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                        <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                        </li>
+                                    <?php endfor; ?>
+                                    <li class="page-item <?php echo $page >= $totalPages ? 'disabled' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>">Berikutnya</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -112,7 +146,6 @@ $users = getAllUsers($conn);
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../asset/js/main.js"></script>
 </body>

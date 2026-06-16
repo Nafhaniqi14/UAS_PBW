@@ -31,7 +31,7 @@ $dashboardUrl = $role === 'admin' ? $basePrefix . 'admin_dashboard.php' : $baseP
             Kategori
         </a>
         <a class="<?php echo sidebarActive($currentPage, 'data_supplier.php', 'edit_supplier.php', 'tambah_supplier.php'); ?>" href="<?php echo $basePrefix; ?>supplier/data_supplier.php">
-            <img class="menu-icon" src="<?php echo $basePrefix; ?>asset/img/supplier-icon.svg" alt="Supplier Icon">
+            <img class="menu-icon" src="<?php echo $basePrefix; ?>asset/img/Supplier-icon.svg" alt="Supplier Icon">
             Supplier
         </a>
     <?php endif; ?>

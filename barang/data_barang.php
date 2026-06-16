@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
     header('Location: ../index.php');
     exit;

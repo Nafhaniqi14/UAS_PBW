@@ -4,15 +4,26 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
     header('Location: ../../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
     exit;
 }
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ../users.php?message=' . urlencode('Akses tidak sah.'));
+    exit;
+}
+
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    header('Location: ../users.php?message=' . urlencode('Akses tidak sah.'));
+    exit;
+}
+
 include '../../koneksi_db.php';
 
-$id_user = (int) ($_GET['id'] ?? 0);
+$id_user = (int)($_POST['id'] ?? 0);
 if ($id_user <= 0) {
     header('Location: ../users.php?message=' . urlencode('ID user tidak valid.'));
     exit;
 }
 
-// Jangan nonaktifkan akun admin sendiri.
+// Jangan ubah status akun sendiri
 if (isset($_SESSION['id_user']) && $_SESSION['id_user'] === $id_user) {
     header('Location: ../users.php?message=' . urlencode('Tidak dapat mengubah status akun sendiri.'));
     exit;
@@ -35,5 +46,3 @@ if ($user = $result->fetch_assoc()) {
 $stmt->close();
 header('Location: ../users.php?message=' . urlencode('User tidak ditemukan.'));
 exit;
-
-?>
