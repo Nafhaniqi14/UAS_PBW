@@ -1,6 +1,12 @@
 <?php
-$role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
-$dashboardUrl = $role === 'admin' ? 'admin_dashboard.php' : 'karyawan_dashboard.php';
+$role = $_SESSION['role'] ?? '';
+
+// Deteksi level nesting untuk menentukan prefix path ('' atau '../')
+$scriptPath = $_SERVER['SCRIPT_NAME'];
+$depth = substr_count($scriptPath, '/') - 1;
+$basePrefix = ($depth > 1) ? '../' : '';
+
+$dashboardUrl = $role === 'admin' ? $basePrefix . 'admin_dashboard.php' : $basePrefix . 'karyawan_dashboard.php';
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark navbar-sidebar shadow-sm">
     <div class="container-fluid">
@@ -19,7 +25,7 @@ $dashboardUrl = $role === 'admin' ? 'admin_dashboard.php' : 'karyawan_dashboard.
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="logout.php">Logout</a>
+                    <a class="nav-link text-white" href="<?php echo $basePrefix; ?>logout.php">Logout</a>
                 </li>
             </ul>
         </div>
