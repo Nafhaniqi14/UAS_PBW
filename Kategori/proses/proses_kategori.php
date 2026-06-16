@@ -1,4 +1,4 @@
- <?php
+<?php
 session_start();
 if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SESSION['role'] ?? '') !== 'admin') {
     header('Location: ../../index.php?message=' . urlencode('HARAP LOGIN TERLEBIH DAHULU!!!!'));
@@ -6,13 +6,19 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../data_kategori.php?message=' . urlencode('Semua field harus diisi'));
+    header('Location: ../data_kategori.php?message=' . urlencode('Akses tidak sah!'));
+    exit;
+}
+
+// Validasi CSRF
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    header('Location: ../data_kategori.php?message=' . urlencode('Akses tidak sah!'));
     exit;
 }
 
 include '../../koneksi_db.php';
 
-$id_kategori = isset($_POST['id_kategori']) && is_numeric($_POST['id_kategori']) ? intval($_POST['id_kategori']) : 0;
+$id_kategori   = isset($_POST['id_kategori']) && is_numeric($_POST['id_kategori']) ? intval($_POST['id_kategori']) : 0;
 $nama_kategori = isset($_POST['nama_kategori']) ? trim($_POST['nama_kategori']) : '';
 
 if ($nama_kategori === '') {
