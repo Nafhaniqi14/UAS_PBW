@@ -5,13 +5,24 @@ if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true || ($_SE
     exit;
 }
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: data_kategori.php?message=' . urlencode('ID kategori tidak valid'));
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: data_kategori.php?message=' . urlencode('Akses tidak sah!'));
     exit;
 }
 
-$id_kategori = intval($_GET['id']);
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    header('Location: data_kategori.php?message=' . urlencode('Akses tidak sah!'));
+    exit;
+}
+
 include '../koneksi_db.php';
+
+$id_kategori = isset($_POST['id']) ? intval($_POST['id']) : 0;
+
+if ($id_kategori <= 0) {
+    header('Location: data_kategori.php?message=' . urlencode('ID kategori tidak valid'));
+    exit;
+}
 
 $sql = "DELETE FROM kategori WHERE id_kategori = ?";
 if ($stmt = $conn->prepare($sql)) {
@@ -20,13 +31,12 @@ if ($stmt = $conn->prepare($sql)) {
         if ($stmt->affected_rows > 0) {
             header('Location: data_kategori.php?message=' . urlencode('Kategori berhasil dihapus'));
         } else {
-            header('Location: data_kategori.php?message=' . urlencode('ID kategori tidak valid')); 
+            header('Location: data_kategori.php?message=' . urlencode('ID kategori tidak valid'));
         }
     } else {
-        $message = 'Gagal menghapus kategori';
-        if ($conn->errno === 1451) {
-            $message = 'Gagal menghapus kategori karena masih digunakan';
-        }
+        $message = ($conn->errno === 1451)
+            ? 'Gagal menghapus kategori karena masih digunakan'
+            : 'Gagal menghapus kategori';
         header('Location: data_kategori.php?message=' . urlencode($message));
     }
     $stmt->close();
