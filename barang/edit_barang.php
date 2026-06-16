@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['login_Un51k4']) || $_SESSION['login_Un51k4'] !== true) {
+if (!isset($_SESSION['L091n_t0K0']) || $_SESSION['L091n_t0K0'] !== true) {
     header('Location: ../index.php');
     exit;
 }
@@ -53,6 +53,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <title>Edit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/css/style.css">
+    <link rel="icon" href="../asset/img/logo_website.png" type="image/x-icon" />
 </head>
 <body class="admin-dashboard">
 
