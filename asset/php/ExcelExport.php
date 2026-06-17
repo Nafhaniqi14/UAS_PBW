@@ -1,9 +1,4 @@
 <?php
-/**
- * ExcelExport - Generate .xlsx dengan formatting rapi
- * Tanpa dependensi eksternal, murni PHP dengan ZipArchive
- * Fitur: header bold+warna, auto-width kolom, border semua sel
- */
 class ExcelExport {
     private string $title;
     private array  $headers;
